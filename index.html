@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sana</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.5; /* Adjust this value to make the spacing larger */
+            margin: 0;
+            padding: 0;
+            color: black;
+            background-image: url('asset/samples/pexels-photo-28821825.jpeg'); /* Background image */
+            background-size: contain; /* Cover the entire viewport */
+            background-attachment: fixed; /* Fixed background */
+            background-position: center;
+            direction: ltr;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 50px 0;
+            background-color: #fff;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+
+        .hero h1 {
+            font-size: 5em;
+            margin: 0.2em 0;
+        }
+
+        .hero h2 {
+            font-size: 2.8em;
+            margin: 0.2em 0;
+            font-weight: normal;
+            line-height: 1.4; /* Adjust this value to make the spacing larger */
+        }
+
+        .hero p {
+            font-size: 1.4em;
+            margin-bottom: 1em;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            font-size: 0.9em;
+            color: white;
+            background-color: black;
+            border-radius: 30px;
+            text-decoration: none;
+        }
+
+        .gallery-container {
+            max-width: 75%; /* Limit the width of the gallery */
+            margin: 0 auto; /* Center the gallery */
+            padding: 20px 0; /* Add some padding on top and bottom */
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr); /* 12 columns grid */
+            grid-auto-rows: 150px; /* Adjust row height */
+            gap: 10px;
+        }
+
+        .gallery-item {
+            overflow: hidden;
+            /*aspect-ratio: 1/1; !* Keep the aspect ratio of the images *!*/
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            /*object-fit: cover;*/
+            object-fit: contain;
+            cursor: pointer; /* Cursor change on hover */
+            border-radius: 20px; /* Rounded corners */
+            transition: transform 0.3s ease; /* Add smooth transition */
+        }
+
+        /* Image scaling on hover */
+        .gallery-item img:hover {
+            transform: scale(0.9); /* Scale the image to 1.2 times its original size */
+        }
+
+        /* Define specific grid item placements */
+        .item1 {
+            grid-column: span 12;
+            grid-row: span 4;
+        }
+
+        /* Large image */
+        /* Modal styling */
+        #modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0, 0, 0, 0.9); /* Black w/ opacity */
+            justify-content: center; /* Horizontally center the image */
+            flex-direction: column;
+            align-items: center; /* Center align items vertically */
+        }
+
+        #modal img {
+            margin: auto;
+            display: block;
+            max-width: 77%;
+            max-height: 77%; /* Ensure the image doesn't overflow vertically */
+            object-fit: contain; /* Make sure the aspect ratio is preserved */
+        }
+
+        #modal-description {
+            color: white;
+            text-align: center;
+            margin-top: 10px; /* Adjust this value to move text closer to the image */
+            font-size: 1.2em;
+        }
+
+        .description {
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-size: 17px;
+            line-height: 1.47;
+            color: #333;
+            /*color: black; !* Text color *!*/
+            letter-spacing: -0.022em;
+            font-weight: 400;
+            background-color: #fff; /* Solid background color that spans the entire width */
+            padding: 20px 0; /* Add vertical padding */
+            text-align: center; /* Center align text */
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+            box-shadow: 2px 4px 12px #00000054;
+        }
+
+        .description_noborder {
+            font-family: Arial, sans-serif;
+            font-style: normal;
+            font-size: 17px;
+            line-height: 1.47;
+            color: #333;
+            /*color: black; !* Text color *!*/
+            letter-spacing: -0.022em;
+            font-weight: 400;
+            background-color: #fff; /* Solid background color that spans the entire width */
+            padding: 20px 0; /* Add vertical padding */
+            text-align: center; /* Center align text */
+        }
+
+        .description-content {
+            /*background-color: rgba(255, 255, 255, 0.1); !* Semi-transparent background inside the section *!*/
+            /*border: 2px solid #555; !* Adding a lighter border *!*/
+            max-width: 65%; /* Limit the width to 80% of the screen */
+            margin: 0 auto; /* Center the content horizontally */
+            padding: 20px; /* Padding inside the border */
+            font-style: normal;
+            border-radius: 18px;
+            /*box-shadow: 2px 4px 12px #00000014;*/
+        }
+
+        .description-content h1 {
+            display: block;
+            color: black;
+            font-size: 2em; /* Adjust size as needed */
+            line-height: 1.2;
+            font-weight: bold;
+            text-align: center; /* Center-align the h1 */
+            margin: 0.5em 0; /* Adjust top and bottom margin as needed */
+            font-style: normal;
+        }
+
+        .description-content h2 {
+            display: block;
+            color: black;
+            font-size: 1.5em;
+            line-height: 1.125;
+            letter-spacing: .004em;
+            font-weight: 600;
+            text-align: left; /* Center-align the h2 */
+            margin-block-start: 0.83em;
+            margin-block-end: 0.83em;
+            margin-inline-start: 0px;
+            margin-inline-end: 0px;
+            font-style: normal;
+        }
+
+        .description-content p {
+            font-size: 1.1em;
+            text-align: left; /* Left-align the p */
+            font-weight: normal;
+        }
+
+        .citation {
+            /*background-color: #333; !* Solid background color that spans the entire width *!*/
+            font-family: Arial, sans-serif;
+            background-color: #fff; /* Solid background color that spans the entire width */
+            color: black;
+            padding: 10px;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .citation-content {
+            text-align: left;
+            border-radius: 15px; /* Rounded corners */
+            font-size: 0.8em;
+            max-width: 80%; /* Limit the width to 80% of the screen */
+            margin: 0 auto; /* Center the content horizontally */
+            margin-top: -30px;
+            padding: 0; /* Padding inside the border */
+            background-color: #f5f5f5; /* Semi-transparent background inside the section */
+            overflow-x: auto; /* Horizontal scrolling */
+            overflow-y: hidden; /* Prevent vertical scrolling */
+            white-space: nowrap; /* Prevent line breaks */
+        }
+
+        .citation-content h2 {
+            font-size: 2em;
+            text-align: left;
+            font-weight: normal;
+        }
+
+        .citation pre {
+            border-radius: 15px; /* Rounded corners */
+            max-width: 90%; /* Limit the width to 80% of the screen */
+            text-align: left;
+        }
+
+        .footer {
+            background-color: #f5f5f5;
+            box-shadow: 2px 4px 12px #00000054;
+            color: #333;
+            padding: 20px;
+            text-align: center;
+            margin-top: -20px;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .footer a {
+            color: dodgerblue;
+            text-decoration: none;
+        }
+
+        .inserted-image {
+            max-width: 80%; /* Set the maximum width for the image */
+            height: auto; /* Ensure the height adjusts automatically to maintain aspect ratio */
+            margin: 30px; /* Add space above and below the image */
+            margin-top: 10px;
+            display: block; /* Make sure the image is treated as a block-level element */
+            margin-left: auto; /* Center the image horizontally */
+            margin-right: auto;
+            border-radius: 10px;
+            box-shadow: 2px 2px 10px 3px #00000030;
+        }
+
+        .inserted-image-noshadow {
+            max-width: 30%; /* Set the maximum width for the image */
+            margin-left: auto; /* Center the image horizontally */
+            margin-right: auto;
+            border-radius: 10px;
+        }
+
+        .video-container {
+            text-align: center; /* Center the video horizontally */
+            margin: 20px 0; /* Add some vertical margin around the video */
+        }
+
+        video {
+            max-width: 80%; /* The video will scale to fit the container */
+            height: auto; /* Maintain the video's aspect ratio */
+            border-radius: 10px; /* Rounded corners for the video */
+            box-shadow: 2px 2px 10px 3px #00000054;
+        }
+
+        .logo {
+            color: black;
+            display: flex;
+            justify-content: center;
+            /*justify-content: left;*/
+            align-items: center;
+            text-align: center;
+            gap: 60px;
+        }
+
+        .logo-sup {
+            position: absolute;
+            top: -5px; /* Adjust this value to position it closer to the top */
+            right: -10px; /* Adjust this value to move it horizontally */
+            font-size: 14px; /* Increase the size of the superscript */
+            color: black; /* Change the color if needed */
+        }
+
+        /* Image comparison container */
+        .image-comparison-container {
+            background-color: #fff; /* Solid background color that spans the entire width */
+        }
+
+        .image-comparison-content {
+            position: relative;
+            width: 580px; /* Adjust the width as needed */
+            height: 402px; /* Adjust the height as needed */
+            overflow: hidden; /* Make sure overflow isn't hiding any part of the images */
+            margin: 0 auto;
+            margin-top: -20px;
+            cursor: ew-resize;
+            border-radius: 10px;
+        }
+
+        .image-comparison-content img {
+            position: absolute;
+            width: 100%;
+            height: 99%;
+            background-color: #fff;
+            object-fit: contain; /* Use contain to ensure the whole image is visible */
+        }
+
+        .image-comparison-content .slider {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background-color: #fff;
+            z-index: 10;
+        }
+
+        .image-comparison-content .slider-black {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 2px;
+            background-color: black;
+            z-index: 10;
+        }
+
+        .demo {
+            margin-top: -20px;
+            background-color: #fff;
+            text-align: center;
+        }
+
+        .demo iframe {
+            width: 50%;
+        }
+
+        .image-comparison-content .image-2 {
+            clip-path: inset(0 0 0 50%);
+        }
+
+        .image-comparison-content .image-4 {
+            clip-path: inset(0 0 0 50%);
+        }
+
+        @media (max-width: 4096px) {
+            .gallery {
+                /*grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); !* Adjust columns for smaller screens *!*/
+                grid-auto-columns: 100px; /* Adjust columns for smaller screens */
+                grid-auto-rows: 200px; /* Set a fixed height for the grid items */
+            }
+
+            .demo iframe {
+                width: 800px;
+            }
+        }
+
+        @media (max-width: 2048px) {
+            .gallery {
+                /*grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); !* Adjust columns for smaller screens *!*/
+                grid-auto-columns: 60px; /* Adjust columns for smaller screens */
+                grid-auto-rows: 90px; /* Set a fixed height for the grid items */
+            }
+
+            .demo iframe {
+                width: 800px;
+            }
+        }
+
+        @media (min-width: 2048px) {
+            .description-content {
+                max-width: 728px; /* Limit the width to 80% of the screen */
+                padding: 10px; /* Padding inside the border */
+            }
+
+            .citation-content {
+                max-width: 728px; /* Limit the width to 80% of the screen */
+                padding: 10px; /* Padding inside the border */
+            }
+
+            .inserted-image {
+                max-width: 1024px; /* Limit the width to 80% of the screen */
+                padding: 10px; /* Padding inside the border */
+            }
+
+            .inserted-image-noshadow {
+                max-width: 384px; /* Limit the width to 80% of the screen */
+            }
+
+            video {
+                max-width: 1024px; /* The video will scale to fit the container */
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .gallery {
+                /*grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); !* Adjust columns for smaller screens *!*/
+                grid-auto-columns: 40px; /* Adjust columns for smaller screens */
+                grid-auto-rows: 70px; /* Set a fixed height for the grid items */
+            }
+
+            .demo iframe {
+                width: 80%;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .description-content {
+                max-width: 728px; /* Limit the width to 80% of the screen */
+                padding: 10px; /* Padding inside the border */
+            }
+
+            .citation-content {
+                max-width: 728px; /* Limit the width to 80% of the screen */
+                padding: 10px; /* Padding inside the border */
+            }
+
+            .inserted-image {
+                max-width: 826px; /* Limit the width to 80% of the screen */
+                padding: 5px; /* Padding inside the border */
+            }
+
+            .inserted-image-noshadow {
+                max-width: 384px; /* Limit the width to 80% of the screen */
+            }
+
+            video {
+                max-width: 728px; /* The video will scale to fit the container */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .gallery {
+                /*grid-template-columns: repeat(auto-fit, minmax(40px, 1fr)); !* Adjust columns for smaller screens *!*/
+                grid-auto-columns: 20px; /* Adjust columns for smaller screens */
+                grid-auto-rows: 30px; /* Set a fixed height for the grid items */
+                gap: 5px;
+            }
+
+            .gallery-container {
+                max-width: 85%; /* Limit the width of the gallery */
+                padding: 10px 0; /* Add some padding on top and bottom */
+            }
+
+            .hero h1 {
+                font-size: 3em;
+            }
+
+            .hero h2 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+
+            .description-content {
+                max-width: 92%; /* Limit the width to 80% of the screen */
+                padding: 10px; /* Padding inside the border */
+            }
+
+            .citation-content {
+                max-width: 92%; /* Limit the width to 80% of the screen */
+                padding: 10px; /* Padding inside the border */
+            }
+
+            .inserted-image {
+                max-width: 95%; /* Limit the width to 80% of the screen */
+                padding: 5px; /* Padding inside the border */
+            }
+
+            .inserted-image-noshadow {
+                max-width: 50%; /* Limit the width to 80% of the screen */
+                margin-left: auto; /* Center the image horizontally */
+                margin-right: auto;
+            }
+
+            video {
+                max-width: 92%; /* The video will scale to fit the container */
+            }
+
+            .logo {
+                gap: 10px;
+            }
+
+            .demo iframe {
+                width: 95%;
+            }
+        }
+
+        /* Dark mode */
+        @media (prefers-color-scheme: dark) {
+            .description {
+                background-color: #333; /* Dark color for dark mode */
+                color: white; /* Light text color for dark mode */
+            }
+
+            .description_noborder {
+                background-color: #333; /* Dark color for dark mode */
+                color: white; /* Light text color for dark mode */
+            }
+
+            .description_noborder h2 {
+                background-color: #333; /* Dark color for dark mode */
+                color: white; /* Light text color for dark mode */
+            }
+
+            .description-content h2 {
+                background-color: #333; /* Dark color for dark mode */
+                color: white; /* Light text color for dark mode */
+            }
+
+            .citation {
+                background-color: #333; /* Dark color for dark mode */
+                color: white; /* Light text color for dark mode */
+            }
+
+            .citation-content {
+                background-color: #555; /* Dark color for dark mode */
+            }
+
+            .citation-content h2 {
+                background-color: #555; /* Dark color for dark mode */
+            }
+
+            .footer {
+                background-color: #222; /* Dark color for dark mode */
+                color: white;
+            }
+
+            .image-comparison-container {
+                background-color: #333; /* Dark color for dark mode */
+            }
+
+            .demo {
+                background-color: #333;
+            }
+        }
+    </style>
+</head>
+<body>
+<!--    <div style="overflow: hidden; background-color: #6699cc;">-->
+<!--      <div class="container">-->
+<!--        <a href="https://www.nvidia.com/" style="float: left; color: black; text-align: center; padding: 12px 16px; text-decoration: none; font-size: 16px;"><img width="100%" src="https://nv-tlabs.github.io/3DStyleNet/assets/nvidia.svg"></a>-->
+<!--        <a href="https://github.com/Efficient-Large-Model/" style="float: left; color: black; text-align: center; padding: 14px 16px; text-decoration: none; font-size: 16px;"><strong>Efficient AI Group</strong></a>-->
+<!--      </div>-->
+<!--    </div>-->
+<div class="hero">
+    <div style="display: flex; justify-content: center; align-items: center; margin-left: -40px;">
+        <img src="asset/COAT.png" alt="Logo" style="width: 200px; height: auto; margin-right: 5px;">
+    </div>
+    <h2>COAT: Compressing Optimizer states and Activation <br>
+        for Memory-Efficient FP8 Training</h2>
+    <p>Enable large model training with limited resources</p>
+
+    <!-- Add author and institution information -->
+    <div style="margin-top: 20px; text-align: center;">
+        <p style="font-size: 1.3em; margin-bottom: 5px;">
+            <a href="https://xijiu9.github.io/" target="_blank" style="color: #76b900;">Haocheng Xi</a><sup>1</sup>,
+            <a href="https://han-cai.github.io//" target="_blank" style="color: #76b900;">Han Cai</a><sup>2</sup>,
+            <a href="https://lzhu.me//" target="_blank" style="color: #76b900;">Ligeng Zhu</a><sup>2</sup>,
+            <a href="https://scholar.google.com/citations?user=OI7zFmwAAAAJ&hl=en/" target="_blank"
+               style="color: #76b900;">Yao Lu</a><sup>2</sup>,
+            <a href="https://people.eecs.berkeley.edu/~keutzer/" target="_blank" style="color: #76b900;">Kurt
+                Keutzer</a><sup>1</sup>
+            <a href="https://ml.cs.tsinghua.edu.cn/~jianfei/" target="_blank" style="color: #76b900;">Jianfei
+                Chen</a><sup>4</sup>
+            <a href="https://hanlab.mit.edu/songhan/" target="_blank" style="color: #76b900;">Song Han</a><sup>2,3</sup>
+        </p>
+        <p style="font-size: 1.2em; color: #888;">
+            <sup>1</sup>University of Califormia, Berkeley, <sup>2</sup>NVIDIA, <sup>3</sup>MIT, <sup>4</sup>Tsinghua
+            University
+            <br>
+        </p>
+    </div>
+    <!--        <div style="overflow: hidden; background-color: #6699cc;">-->
+    <div style="overflow: hidden; background-color: #fff;">
+        <div class="logo" style="padding: 12px;">
+            <a href="https://www.berkeley.edu/" style="text-decoration: none; font-size: 16px;">
+                <img src="asset/University_of_California,_Berkeley.png" alt="Berkeley Logo"
+                     style="width: auto; height: 80px;">
+            </a>
+            <a href="https://www.nvidia.com/" style="text-decoration: none; font-size: 16px;">
+                <img src="https://nv-tlabs.github.io/3DStyleNet/assets/nvidia.svg" alt="NVIDIA Logo"
+                     style="width: auto; height: 30px;">
+            </a>
+            <a href="https://hanlab.mit.edu/" style="text-decoration: none; font-size: 16px;">
+                <img src="asset/mit_han.png" alt="MIT Logo" style="width: auto; height: 30px;">
+            </a>
+            <a href="" style="text-decoration: none; font-size: 16px;">
+                <img src="asset/thu.jpg" alt="THU Logo" style="width: auto; height: 40px;">
+            </a>
+        </div>
+    </div>
+
+    <a href="https://arxiv.org/abs/2410.19313" class="button">Paper</a>
+    <a href="https://github.com/NVlabs/COAT" class="button">Code (TODO)</a>
+</div>
+
+
+<div class="gallery-container">
+    <section class="gallery" id="gallery">
+        <div class="gallery-item item1"><img src="asset/content/FP8PrecisionFlow.png" alt="Image 1"
+                                             data-description='Overview of COAT Framework'></div>
+    </section>
+</div>
+
+<!-- The Modal -->
+<div id="modal" onclick="this.style.display='none'">
+    <img id="modal-img" src="">
+    <div id="modal-description"></div> <!-- Text for description -->
+</div>
+
+<section class="description">
+    <div class="description-content">
+        <h1>About COAT</h1>
+        <p>
+            We introduce COAT (<strong style="font-size: 18px;">C</strong>ompressing <strong
+                style="font-size: 18px;">O</strong>ptimizer states
+            and <strong style="font-size: 18px;">A</strong>ctivation for Memory-Efficient FP8 <strong
+                style="font-size: 18px;">T</strong>raining),
+            a novel method designed to optimize the memory efficiency of training large models by compressing
+            optimizer states and activations using FP8 quantization. <br>
+        </p>
+
+        <p style="margin-bottom: 20px;">
+            Key Innovations include:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp; <strong style="font-size: 18px;">Dynamic Range Expansion</strong>,
+            which aligns optimizer state distributions
+            more closely with the FP8 representation range, thereby reducing quantization error.<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;-&nbsp;&nbsp; <strong style="font-size: 18px;">Mixed-Granularity Activation
+            Quantization</strong>, which optimizes activation
+            memory using a combination of per-tensor and per-group quantization strategies.<br>
+        </p>
+
+        <p style="margin-bottom: 20px;">
+            COAT allows to reduced end-to-end memory footprint by <strong style="font-size: 18px;">1.54×</strong>,
+            speedup end-to-end training by <strong style="font-size: 18px;">1.43×</strong>,
+            while maintaining model accuracy. It can also double the training batch size and
+            therefore utilize GPU better.
+        </p>
+
+        <p>
+            By leveraging FP8 precision, COAT enables efficient full-parameter training of large models on fewer
+            GPUs, and facilitates doubling the batch size in distributed training settings, providing a practical
+            solution for scaling large-scale model training.
+        </p>
+    </div>
+
+</section>
+
+<section class="description_noborder">
+    <div class="description-content">
+        <h1>Part 1: FP8 Optimizer States</h1>
+        <h2>Difficulty of FP8 quantization for optimizer states</h2>
+        <p>
+            We find that current quantization methods can not fully utilize the representation range of FP8
+            and therefore lead to a large quantization error when quantizing optimizer states with per-group
+            quantization.
+            For the <a href="https://arxiv.org/abs/2209.05433" target="_blank">E4M3 format</a>, we hope the dynamic
+            range of the quantization group X should cover the entire span between the minimum representable value
+            of E4M3 (0.00195) and the maximum representable value of E4M3 (448) to fully utilize its representation
+            ability. However, the dynamic range of E4M3 is usually <strong
+                style="font-size: 18px;">under-utilized</strong>:
+            The dynamic range of E4M3 is about 2e5, but the dynamic range of first order momentum is usually 1e3, and
+            the dynamic range of second order momentum is usually 1e1. This make the quantization error really large.
+        </p>
+    </div>
+
+    <div>
+        <img src="asset/content/rk_11_E4M3_E4M3_final.png" alt="Under-utilized dynamic range of FP8"
+             class="inserted-image">
+    </div>
+
+    <div class="description-content">
+        <h2>Our solution: Dynamic Range Expansion:</h2>
+        <p>
+            We introduce a expand function f(·) before quantization to expand the dynamic range of the quantization
+            group and align it with E4M3. The expand function we use is:
+        </p>
+
+        <p>$$ f(x) = \operatorname{sign}(x) \cdot |x|^k, $$</p>
+
+        <p>where k is a parameter we calculate on-the-fly. When k > 1, the dynamic range will be enlarged and become
+            closer to the dynamic range of E4M3. The optimal k can be directly calculated, and can fully utilize
+            the representation range of E4M3, while the original quantization method can only utilize a small portion
+            of it. Our dynamic range expansion method can greatly reduce the quantization error and fully utilize the
+            dynamic range of E4M3.
+
+            We find that E4M3 is more suitable for first order momentum than E5M2. For second order momentum,
+            although E4M3 better than E5M2 in original setting, their quantization error is nearly the same
+            after applying our expand function. Therefore we propose to use E4M3 + E4M3 quantization strategy or
+            E4M3 + E5M2 quantization strategy when quantizing the optimizer states.
+        </p>
+    </div>
+
+    <div>
+        <img src="asset/content/RangeExpansion.png" alt="Under-utilized dynamic range of FP8" class="inserted-image">
+    </div>
+
+    <div class="description-content">
+        <h1>Part 2: FP8 Activation</h1>
+        <h2>Motivation: Non-linear layers costs large memory footprint</h2>
+        <p>
+            In the forward pass of neural networks, activations must be preserved for the backward pass to
+            calculate gradients. Non-linear layers typically account for approximately 50% of the memory footprint
+            in the Llama model series. In contrast, linear layers contribute less than 25%. Therefore, it is
+            essential to optimize both linear and non-linear layers to reduce activation memory footprint.
+        </p>
+    </div>
+
+    <div>
+        <img src="asset/content/NonlinearLinear.png" alt="pipeline for Sana" class="inserted-image">
+    </div>
+
+    <div class="description-content">
+        <h2>Our Solution: Mixed Granularity FP8 Precision Flow</h2>
+        <p>
+            <strong style="font-size: 18px;">FP8 precision flow</strong> requires the input and output of all linear
+            and non-linear layers in FP8.
+            By directly saving the input tensor in FP8 format for the backward pass, we eliminate the need for
+            an extra quantization operation, which reduces the associated overhead. FP8 precision flow natually
+            reduce the memory footprint for non-linears and linear layers by 50%, since they only need to save FP8
+            activations, not BF16.
+
+            To further improve the accurateness of this method, we propose to vary the quantization granularity
+            across different layers to balance precision and efficiency in a mixed-granularity manner.
+            For non-linear layers, <a href="https://arxiv.org/abs/2102.04503" target="_blank">VS-Quant</a> or
+            <a href="https://arxiv.org/abs/2403.12422" target="_blank">PerBlock Quant</a> methods are well-suited due to
+            their fine-grained
+            and precise nature. For linear layers, we apply per-tensor quantization to maximize the
+            performance of Tensor Cores. We observe that quantizing the input of layernorm across multiple token
+            axes is detrimental to accuracy, and therefore decide to apply per-group quantization to non-linear layers.
+        </p>
+
+        <h2>Group Scaling: Efficient Just-in-time Scaling</h2>
+        <p>To perform per-tensor quantization, the maximum absolute value of the tensor needs
+            to be calculated through max reduction, adding a lot of overhead. In our Group Scaling, we address these
+            problems by splitting the max reduction into two stages:
+            (1) performing max reduction on each 1 × G element and storing the results as intermediate values; (2)
+            applying max reduction on the intermediate tensor to obtain the per-tensor max value. The first stage
+            can be seamlessly fused with the previous operation, adding minimal overhead, while the second
+            stage is more efficient than doing max reduction on the entire tensor, as the intermediate result
+            is G× smaller than the original tensor.</p>
+    </div>
+
+    <div>
+        <img src="asset/content/mixedgranularity.png" alt="flow-dpms vs flow-euler" class="inserted-image">
+    </div>
+
+    <div class="description-content">
+        <h1>Memory Saving, Speedup, and Accuracy</h1>
+        <h2>Strong end-to-end memory saving and speedup ability</h2>
+        <p>In all multi-GPU training setting, COAT can double the micro-batch size and therefore lead to even higher
+            speedup. For example, our method can achieve $2.25\times$ speedup when training Llama-2-13B on 4-GPUs
+            since we can effectively increase the batch size to 2. <br>
+
+            Overall, COAT significantly reduces end-to-end memory usage by up to $1.55\times$ and speeds up the
+            end-to-end training by nearly $1.44\times$. This facilitates full-parameter training on fewer GPUs,
+            which is particularly beneficial for larger language models.</p>
+    </div>
+
+    <div>
+        <img src="asset/content/end_to_end_bench.png" alt="COAT performance" class="inserted-image">
+    </div>
+
+    <div class="description-content">
+        <h2>Accuracy Experiments - OLMo pretraining</h2>
+        <p>We perform Large Language Model pretraining on
+            <a href="https://arxiv.org/abs/2402.00838" target="_blank">OLMo-1B</a> and OLMo-7B on Dolma,
+            following the official report. The training curve and downstream task performance were consistent with BF16
+            training and TransformerEngine baseline, validating the effectiveness of COAT.</p>
+    </div>
+
+    <div>
+        <img src="asset/content/OLMo-1BTraining.png" alt="COAT performance" class="inserted-image">
+    </div>
+
+    <div class="description-content">
+        <h2>Downstream Application - Image Captioning</h2>
+        <p>We validate the effectiveness of our method on real-world examples. On the Image Captioning task, we find
+            that the model trained by COAT can accurately summarize the figure and
+            identify the key points in the figure, in comparison with BF16 training models.</p>
+    </div>
+
+    <div>
+        <img src="asset/content/VILAExample.png" alt="COAT performance" class="inserted-image">
+    </div>
+
+    <!--BibTex citation -->
+    <div class="description-content">
+        <h2 class="title">BibTeX</h2>
+    </div>
+    <section class="citation" id="BibTeX">
+        <div class="citation-content">
+                <pre><code>@misc{xi2024coatcompressingoptimizerstates,
+      title={COAT: Compressing Optimizer states and Activation for Memory-Efficient FP8 Training},
+      author={Haocheng Xi and Han Cai and Ligeng Zhu and Yao Lu and Kurt Keutzer and Jianfei Chen and Song Han},
+      year={2024},
+      eprint={2410.19313},
+      archivePrefix={arXiv},
+      primaryClass={cs.LG},
+      url={https://arxiv.org/abs/2410.19313},
+}</code></pre>
+        </div>
+    </section>
+
+</section>
+<!--End BibTex citation -->
+
+<!-- Footer Section -->
+<footer class="footer">
+    <div class="container">
+        <div class="columns is-centered">
+            <div class="column is-8">
+                <div class="content">
+                    <p>
+                        This website is licensed under a <a
+                            rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative
+                        Commons Attribution-ShareAlike 4.0 International License</a>.
+                    </p>
+                    <span id="busuanzi_container_site_pv">Total clicks: <span
+                            id="busuanzi_value_site_pv"></span></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- End Footer -->
+
+<script>
+    // Function to open the modal and display the clicked image and description
+    function openModal(img) {
+        var modal = document.getElementById("modal");
+        var modalImg = document.getElementById("modal-img");
+        var modalDescription = document.getElementById("modal-description");
+
+        modal.style.display = "flex";
+        modalImg.src = img.src;
+        modalDescription.textContent = img.getAttribute('data-description'); // Get description from data-description attribute
+    }
+
+    // Add click event listeners to all images in the gallery with their descriptions
+    const images = document.querySelectorAll('.gallery-item img');
+    images.forEach((img) => {
+        img.addEventListener('click', () => openModal(img));
+    });
+</script>
+
+<script>
+    const container = document.querySelector('.image-comparison-content');
+    const slider = document.querySelector('.slider');
+    // const slider_black = document.querySelector('.slider-black');
+    const image2 = document.querySelector('.image-2');
+    // const image4 = document.querySelector('.image-4');
+
+    container.addEventListener('mousemove', (e) => {
+        const rect = container.getBoundingClientRect();
+        let xPos = e.clientX - rect.left;
+
+        if (xPos < 0) xPos = 0;
+        if (xPos > rect.width) xPos = rect.width;
+
+        const percentage = (xPos / rect.width) * 100;
+
+        slider.style.left = `${percentage}%`;
+        // slider_black.style.left = `${percentage}%`;
+        image2.style.clipPath = `inset(0 0 0 ${percentage}%)`;
+        // image4.style.clipPath = `inset(0 0 0 ${percentage}%)`;
+    });
+</script>
+</body>
+</html>
