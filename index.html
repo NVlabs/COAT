@@ -779,11 +779,11 @@
         <h1>Memory Saving, Speedup, and Accuracy</h1>
         <h2>Strong end-to-end memory saving and speedup ability</h2>
         <p>In all multi-GPU training setting, COAT can double the micro-batch size and therefore lead to even higher
-            speedup. For example, our method can achieve $2.25\times$ speedup when training Llama-2-13B on 4-GPUs
+            speedup. For example, our method can achieve 2.25x speedup when training Llama-2-13B on 4-GPUs
             since we can effectively increase the batch size to 2. <br>
 
-            Overall, COAT significantly reduces end-to-end memory usage by up to $1.55\times$ and speeds up the
-            end-to-end training by nearly $1.44\times$. This facilitates full-parameter training on fewer GPUs,
+            Overall, COAT significantly reduces end-to-end memory usage by up to 1.55x and speeds up the
+            end-to-end training by nearly 1.44x. This facilitates full-parameter training on fewer GPUs,
             which is particularly beneficial for larger language models.</p>
     </div>
 
@@ -794,13 +794,18 @@
     <div class="description-content">
         <h2>Accuracy Experiments - OLMo pretraining</h2>
         <p>We perform Large Language Model pretraining on
-            <a href="https://arxiv.org/abs/2402.00838" target="_blank">OLMo-1B</a> and OLMo-7B on Dolma,
-            following the official report. The training curve and downstream task performance were consistent with BF16
-            training and TransformerEngine baseline, validating the effectiveness of COAT.</p>
+            <a href="https://arxiv.org/abs/2402.00838" target="_blank">OLMo-1B</a> and
+            <a href="https://arxiv.org/abs/2402.00838" target="_blank">OLMo-7B</a> on Dolma,
+            following the official report. We train OLMo-1B for 300B tokens and train OLMo-7B for 160B tokens.
+            The training curve and downstream task performance were consistent with BF16
+            training baseline, validating the effectiveness of COAT.</p>
     </div>
 
     <div>
-        <img src="asset/content/OLMo-1BTraining.png" alt="COAT performance" class="inserted-image">
+        <img src="asset/content/OLMo-1B7BLossCurve.png" alt="COAT performance" class="inserted-image">
+    </div>
+    <div>
+        <img src="asset/content/OLMo-1B7BTraining.png" alt="COAT performance" class="inserted-image">
     </div>
 
     <div class="description-content">
