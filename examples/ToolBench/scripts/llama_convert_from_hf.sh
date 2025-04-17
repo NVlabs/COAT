@@ -10,6 +10,9 @@ REPO_ROOT="$( cd "$SCRIPT_DIR/../.." &> /dev/null && pwd )"
 
 export COAT_PATH=$(pip show fp8_coat | grep "Editable project location" | awk -F': ' '{print $2}')
 echo "COAT package is located at: $COAT_PATH"
+if [ -z "$COAT_PATH" ]; then
+    export COAT_PATH=$(pip show fp8_coat | grep "Location" | awk -F': ' '{print $2}')
+fi
 
 cd $COAT_PATH
 python -m coat.models.coat_llama_convert_from_hf \
