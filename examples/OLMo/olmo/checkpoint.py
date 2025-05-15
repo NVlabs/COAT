@@ -641,10 +641,16 @@ class FullCheckpointer(Checkpointer):
                     )
 
                     # Then the optimizer state.
-                    optim_state_dict = FSDP.optim_state_dict(dist_model, optim)
-                    self._write_optim_dict(
-                        optim_state_dict, checkpoint_dir, upload_to, save_overwrite=self.cfg.save_overwrite
-                    )
+                    try:
+                        optim_state_dict = FSDP.optim_state_dict(dist_model, optim)
+                        self._write_optim_dict(
+                            optim_state_dict, checkpoint_dir, upload_to, save_overwrite=self.cfg.save_overwrite
+                        )
+                    except AttributeError as e:
+                        # NOTE: This is a workaround problem we have with saving coat optimizer.
+                        # This means we probably do not have optimizer states unsharded at the end of the training
+                        # when we are training with coat optimizer only.
+                        pass
             elif isinstance(dist_model, DDP):
                 # _write_model_dict and _write_optim_dict only write checkpoints for rank 0
                 # First, get the model state dict from DDP wrapped model
@@ -1513,7 +1519,7 @@ class LocalShardedCheckpointer(Checkpointer):
     def _fsdp_handles(self, fsdp_model: FSDP) -> List[FlatParamHandle]:
         if version.parse(torch.__version__) < version.parse("2.1.0"):
             return fsdp_model._handles  # type: ignore
-        elif version.parse(torch.__version__) < version.parse("2.3.0"):
+        elif version.parse(torch.__version__) < version.parse("2.8.0"):
             # Handle could be None if the FSDP wrapper doesn't manage any parameters.
             if hasattr(fsdp_model, "_handle") and fsdp_model._handle is not None:
                 return [fsdp_model._handle]  # type: ignore
