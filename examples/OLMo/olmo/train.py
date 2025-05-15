@@ -781,7 +781,7 @@ class Trainer:
 
         for micro_batch_idx, micro_batch in enumerate(micro_batches):
             if self.cfg.quantize_model.use_quantize_model == "coat_real":
-                from coat.activation.models._fp8manager import FP8Manager
+                from coat.utils._fp8manager import FP8Manager
                 if micro_batch_idx == 0:
                     FP8Manager.is_first_microbatch = True
                 else:
