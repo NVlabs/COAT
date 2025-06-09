@@ -63,7 +63,7 @@ from ..activation.real_quantization import (Coat_quantize_bgn, Coat_quantize_end
                                  fp8_layernorm_noparam_backward,
                                  fp8_layernorm_noparam_forward,
                                  fp8_linear_backward, fp8_linear_forward,
-                                 fp8_mul_backward, fp8_mul_forward,
+                                 fp8_mul_backward, fp8_mul_pgpg2pt_forward,
                                  fp8_quantize, fp8_quantize_pertensor,
                                  fp8_quantize_pertensor_transpose,
                                  fp8_rmsnorm_backward, fp8_rmsnorm_forward,
@@ -223,7 +223,7 @@ class _CoatOLMoBeforeAttentionResidual(torch.autograd.Function):
         # Linear Layer QKV Projection
         if qargs.weight_memory_efficient:
             weight1_t, weight1_s = fp8_division_transpose(
-                weight1_t, qargs.group_size, fwobits["fwbit"], weight1_s, only_transposed=True
+                weight1_t, qargs.group_size, fwobits["fwbit"], weight1_s, only_transposed_2d=True
             )
         fc1_g, att_proj_wg = fp8_linear_backward(
             ln_x_t, ln_s, flash_g, flash_gs, flash_g_t, weight1_t, weight1_s, group_size
@@ -366,12 +366,12 @@ class _CoatOLMoAfterAttentionResidual(torch.autograd.Function):
 
         # We do not save an extra flash_x to save the memory usage
         flash_x_t, flash_s = fp8_division_transpose(
-            flash_x, group_size, fwobits["fabit"], flash_s, stochastic=False, only_transposed=True
+            flash_x, group_size, fwobits["fabit"], flash_s, stochastic=False, only_transposed_2d=True
         )
 
         if qargs.weight_memory_efficient:
             weight2_t, weight2_s = fp8_division_transpose(
-                weight2_t, qargs.group_size, fwobits["fwbit"], weight2_s, only_transposed=True
+                weight2_t, qargs.group_size, fwobits["fwbit"], weight2_s, only_transposed_2d=True
             )
         fc2_g, attn_out_wg = fp8_linear_backward(
             flash_x_t, flash_s, out_g, out_gs_max, out_g_t, weight2_t, weight2_s, group_size
@@ -525,7 +525,7 @@ class _CoatOLMoMLPResidual(torch.autograd.Function):
         silu_x, silu_s = fp8_silu_forward(gate_x, gate_s, group_size)
 
         # Element-wise Multiplication
-        mul_x, mul_s, mul_x_t = fp8_mul_forward(silu_x, silu_s, up_x, up_s, group_size, transpose_output_2d=True)
+        mul_x, mul_s, mul_x_t = fp8_mul_pgpg2pt_forward(silu_x, silu_s, up_x, up_s, group_size, transpose_output_2d=True)
 
         # Output Projection
         if weight2 is None:  # memory efficient
@@ -581,7 +581,7 @@ class _CoatOLMoMLPResidual(torch.autograd.Function):
 
         if qargs.weight_memory_efficient:
             weight2_t, weight2_s = fp8_division_transpose(
-                weight2_t, qargs.group_size, fwobits["fwbit"], weight2_s, only_transposed=True
+                weight2_t, qargs.group_size, fwobits["fwbit"], weight2_s, only_transposed_2d=True
             )
         fc2_g, weight2_grad = fp8_linear_backward(
             mul_x_t, mul_s, out_g, out_gs_max, out_g_t, weight2_t, weight2_s, group_size
@@ -608,7 +608,7 @@ class _CoatOLMoMLPResidual(torch.autograd.Function):
         # Linear Layer of Up and Gate Projection
         if qargs.weight_memory_efficient:
             weight1_t, weight1_s = fp8_division_transpose(
-                weight1_t, group_size, fwobits["fwbit"], weight1_s, only_transposed=True
+                weight1_t, group_size, fwobits["fwbit"], weight1_s, only_transposed_2d=True
             )
         fc1_g, weight1_grad = fp8_linear_backward(
             ln_x_t, ln_s, gateup_g, gateup_gs, gateup_g_t, weight1_t, weight1_s, group_size

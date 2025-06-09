@@ -446,7 +446,7 @@ class OLMoBlock(nn.Module):
 
         # Attention output projection.
         if os.environ.get("COAT_FP8Linear", "false") == "PerTensor":
-            from coat.activation.real_quantization.fp8linear import FP8Linear
+            from coat.activation.real_quantization.linear.fp8linear import FP8Linear
             self.attn_out = FP8Linear(
                 config.d_model, config.d_model, bias=config.include_bias, device=config.init_device, layer_idx=layer_id
             )
@@ -715,7 +715,7 @@ class OLMoSequentialBlock(OLMoBlock):
             config.effective_n_kv_heads * head_dim,
         )
         if os.environ.get("COAT_FP8Linear", "false") == "PerTensor":
-            from coat.activation.real_quantization.fp8linear import FP8Linear
+            from coat.activation.real_quantization.linear.fp8linear import FP8Linear
             self.att_proj = FP8Linear(
                 config.d_model, sum(self.fused_dims), bias=config.include_bias, device=config.init_device, layer_idx=layer_id
             )

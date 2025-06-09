@@ -22,11 +22,11 @@ import torch
 from .test_utils import (check_similarity, dequantize_tensor, quantize_tensor,
                         random_tensor_generator)
 
-from coat.activation.real_quantization.func_layernorm_noparam import (
+from coat.activation.real_quantization.norm.func_layernorm_noparam import (
     fp8_layernorm_noparam_backward, fp8_layernorm_noparam_forward)
-from coat.activation.real_quantization.func_layernorm_param import (
+from coat.activation.real_quantization.norm.func_layernorm_param import (
     fp8_layernorm_param_backward, fp8_layernorm_param_forward)
-from coat.activation.real_quantization.func_rmsnorm import (
+from coat.activation.real_quantization.norm.func_rmsnorm import (
     fp8_rmsnorm_backward, fp8_rmsnorm_forward)
 
 

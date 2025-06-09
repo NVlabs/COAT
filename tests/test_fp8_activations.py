@@ -23,18 +23,18 @@ from test_utils import (check_similarity, dequantize_tensor, quantize_tensor,
                         random_tensor_generator)
 
 from coat.activation.real_quantization.common import FP8_MAX_VALUE
-from coat.activation.real_quantization.gelu_bwd import fp8_gelu_backward
-from coat.activation.real_quantization.gelu_bwd_legacy import \
+from coat.activation.real_quantization.activation.gelu_bwd import fp8_gelu_backward
+from coat.activation.real_quantization.activation.gelu_bwd_legacy import \
     fp8_gelu_backward_legacy
-from coat.activation.real_quantization.gelu_fwd import fp8_gelu_forward
-from coat.activation.real_quantization.mul_bwd import fp8_mul_backward
-from coat.activation.real_quantization.mul_bwd_legacy import \
+from coat.activation.real_quantization.act.gelu_fwd import fp8_gelu_forward
+from coat.activation.real_quantization.act.mul_bwd import fp8_mul_backward
+from coat.activation.real_quantization.act.mul_bwd_legacy import \
     fp8_mul_backward_legacy
-from coat.activation.real_quantization.mul_fwd import fp8_mul_forward
-from coat.activation.real_quantization.silu_bwd import fp8_silu_backward
-from coat.activation.real_quantization.silu_bwd_legacy import \
+from coat.activation.real_quantization.act.mul_pgpg2pt_fwd import fp8_mul_pgpg2pt_forward
+from coat.activation.real_quantization.act.silu_bwd import fp8_silu_backward
+from coat.activation.real_quantization.act.silu_bwd_legacy import \
     fp8_silu_backward_legacy
-from coat.activation.real_quantization.silu_fwd import fp8_silu_forward
+from coat.activation.real_quantization.act.silu_fwd import fp8_silu_forward
 
 
 def _test_gelu_fwd(x, qx, sx, BS, SL, CDIM, QB):
@@ -158,7 +158,7 @@ def _test_mul_fwd(x1, qx1, sx1, x2, qx2, sx2, BS, SL, CDIM, QB):
     output_torch = x1 * x2
     output_torch, _, _ = quantize_tensor(output_torch, BS, SL, CDIM, QB, qx1.dtype, quant_type="per_block")
 
-    x_triton, s_triton, x_t_triton = fp8_mul_forward(qx1, sx1, qx2, sx2, QB)
+    x_triton, s_triton, x_t_triton = fp8_mul_pgpg2pt_forward(qx1, sx1, qx2, sx2, QB)
     output_triton = dequantize_tensor(x_triton, s_triton, BS, SL, CDIM, QB)
 
     return output_torch, output_triton
@@ -234,6 +234,7 @@ class TestActivation(unittest.TestCase):
 
         # This is a very loose assert. Most values should be the same.
         # self.assertTrue(torch.allclose(output_torch + 1e-8, output_triton + 1e-8, 1e-2, 0.2))
+        import IPython; IPython.embed()
         self.assertTrue(check_similarity(output_torch, output_triton))
 
     # Test the backward of GELU

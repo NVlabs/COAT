@@ -26,11 +26,11 @@ import torch.nn.functional as F
 from torch.autograd.function import Function
 
 from ..utils import quant_get_local_rank
-from ..real_quantization._quantize import fp8_quantize
-from ..real_quantization._quantize_transpose import fp8_quantize_transpose
-from ..real_quantization._quantize_perblock import fp8_quantize_perblock
-from ..real_quantization._quantize_perblock_transpose import fp8_quantize_perblock_transpose
-from ..real_quantization._quantize_perblock_transpose_pergroup import fp8_quantize_perblock_transpose_pergroup
+from ..real_quantization.quantize._quantize import fp8_quantize
+from ..real_quantization.quantize._quantize_transpose import fp8_quantize_transpose
+from ..real_quantization.quantize._quantize_perblock import fp8_quantize_perblock
+from ..real_quantization.quantize._quantize_perblock_transpose import fp8_quantize_perblock_transpose
+from ..real_quantization.quantize._quantize_perblock_transpose_pergroup import fp8_quantize_perblock_transpose_pergroup
 from .linear import fp8_deepseek_linear_backward, fp8_deepseek_linear_forward
 
 import deep_gemm

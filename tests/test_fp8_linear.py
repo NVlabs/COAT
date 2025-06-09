@@ -18,8 +18,8 @@ import unittest
 
 import torch
 import triton
-from coat.activation.real_quantization.linear import fp8matmul
-from coat.activation.real_quantization.fp8linear import FP8Linear
+from coat.activation.real_quantization.linear.linear import fp8matmul
+from coat.activation.real_quantization.linear.fp8linear import FP8Linear
 from coat.activation.deepseek.fp8linear import FP8DeepSeekLinear
 from .test_utils import check_similarity, dequantize_tensor, quantize_tensor
 

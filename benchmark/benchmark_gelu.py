@@ -17,8 +17,8 @@
 import torch
 import triton
 
-from coat.activation.real_quantization.gelu_fwd import fp8_gelu_forward
-from coat.activation.real_quantization._quantize import fp8_quantize
+from coat.activation.real_quantization.act.gelu_fwd import fp8_gelu_forward
+from coat.activation.real_quantization.quantize._quantize import fp8_quantize
 
 
 def benchmarker(M, N, provider, groupsize: int = 16, dtype = torch.float8_e4m3fn):

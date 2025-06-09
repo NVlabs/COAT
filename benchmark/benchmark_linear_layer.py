@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import triton
-from coat.activation.real_quantization.fp8linear import FP8Linear
+from coat.activation.real_quantization.linear.fp8linear import FP8Linear
 from coat.activation.deepseek.fp8linear import FP8DeepSeekLinear
 
 torch.cuda.empty_cache()

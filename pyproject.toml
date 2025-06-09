@@ -13,11 +13,11 @@ classifiers = [
 ]
 dependencies = [
     "torch>=2.4.1",
-    "triton==3.1.0",
-    "transformers==4.45.2",
-    "wandb==0.18.5",
-    "matplotlib==3.9.2",
-    "gdown==5.2.0",
+    "triton>=3.1.0",
+    "transformers>=4.45.2",
+    "wandb>=0.18.5",
+    "matplotlib>=3.9.2",
+    "gdown>=5.2.0",
     "peft",
     "sentencepiece",
     "IPython"

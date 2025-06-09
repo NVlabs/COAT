@@ -18,7 +18,7 @@ import torch
 import triton
 import deep_gemm
 
-from coat.activation.real_quantization.linear import fp8matmul
+from coat.activation.real_quantization.linear.linear import fp8matmul
 
 
 

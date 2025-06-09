@@ -5,8 +5,8 @@ from .test_utils import (check_similarity, dequantize_tensor, quantize_tensor,
                         random_tensor_generator)
 
 from coat.activation.real_quantization.common import FP8_MAX_VALUE
-from coat.activation.real_quantization._quantize_perblock import fp8_quantize_perblock
-from coat.activation.real_quantization._quantize_transpose import fp8_quantize_transpose
+from coat.activation.real_quantization.quantize._quantize_perblock import fp8_quantize_perblock
+from coat.activation.real_quantization.quantize._quantize_transpose import fp8_quantize_transpose
 
 
 def _test_quantize_perblock(x, BS, SL, CDIM, fp8type, QB, eps=1e-5):
