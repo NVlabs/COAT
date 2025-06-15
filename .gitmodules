@@ -7,3 +7,18 @@
 [submodule "third_party/DeepGEMM"]
 	path = third_party/DeepGEMM
 	url = https://github.com/deepseek-ai/DeepGEMM.git
+[submodule "third_party/ThunderKittens"]
+	path = third_party/ThunderKittens
+	url = https://github.com/HazyResearch/ThunderKittens
+[submodule "third_party/cutlass"]
+	path = third_party/cutlass
+	url = https://github.com/NVIDIA/cutlass
+[submodule "third_party/flash-attention"]
+	path = third_party/flash-attention
+	url = https://github.com/Dao-AILab/flash-attention
+[submodule "third_party/triton"]
+	path = third_party/triton
+	url = https://github.com/triton-lang/triton
+[submodule "third_party/flashinfer"]
+	path = third_party/flashinfer
+	url = https://github.com/flashinfer-ai/flashinfer
