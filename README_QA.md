@@ -12,3 +12,6 @@ pip install ./wheelhouse/flash_attn-xxx.whl
 
 ### Flash Attention Compilation Failed
 Try to install version 2.5.8
+
+### DeepGEMM notice
+Must use CUDA 12.8. CUDA 12.9 will gives suboptimal performance. (1334 to 1272 TFLOPS)

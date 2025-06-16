@@ -16,7 +16,7 @@
 
 from typing import Tuple
 import argparse
-
+import deep_gemm
 import torch
 import triton
 
@@ -49,10 +49,13 @@ def triton_fp8_output_quantized(a, b, scale_a, scale_b, groupsize, bias):
     """ A: (M, K), row-major | B: (K, N), col-major | scale_a: (1) | scale_b: (1) | bias: (N) | output: (M, N), row-major """
     output_fp8_y, output_fp8_s = fp8matmul(a, b, True, scale_a, scale_b, groupsize, bias=bias)
     
-def deepseek_fp8_define(ds_x_fp8, ds_y_fp8, ds_out):
-    """ A: (M, K) | B: (N, K) | scale_a: (M, K // QB) | scale_b: (N // QB, K // QB) | bias: (N) | output: (M, N) """
-    import deep_gemm
+def deepseek_fp8_forward(ds_x_fp8, ds_y_fp8, ds_out):
+    """ A: (M, K), row-major | B: (N, K), row-major | scale_a: (M, K // QB), col-major | scale_b: (N // QB, K // QB), row-major | bias: (N), row-major | output: (M, N), row-major """
     return deep_gemm.gemm_fp8_fp8_bf16_nt(ds_x_fp8, ds_y_fp8, ds_out)
+
+def deepseek_fp8_wgrad(ds_x_fp8, ds_y_fp8, ds_out):
+    """ A: (M, K), row-major | B: (N, K), row-major | scale_a: (M, K // QB), col-major | scale_b: (N, K // QB), col-major | bias: (N), row-major | output: (M, N), row-major """
+    return deep_gemm.wgrad_gemm_fp8_fp8_fp32_nt(ds_x_fp8, ds_y_fp8, ds_out)
     
 ########################################################
 #                  Benchmark Functions                 #
@@ -90,16 +93,29 @@ def benchmarker(M, N, K, provider, scalar, groupsize: int = 16):
         elif provider == "triton-fp8-output-quantized":
             ms, min_ms, max_ms = triton.testing.do_bench(lambda: triton_fp8_output_quantized(a, b, scale_a, scale_b, groupsize, bias), quantiles=quantiles, rep=500)
     elif "deepseek" in provider:
-        if provider == "deepseek-fp8":    # DeepSeek's input
+        a, b = a.to(torch.float8_e4m3fn), b.to(torch.float8_e4m3fn)
+        
+        if provider == "deepseek-fp8-fwd":    # DeepSeek's input
             QB = 128
             ds_scale_a = torch.rand((M, K // QB), dtype=torch.float32, device="cuda")
             ds_scale_b = torch.rand((N // QB, K // QB), dtype=torch.float32, device="cuda")
             ds_scale_a = ds_scale_a.t().contiguous().t()
             
-            ds_x_fp8, ds_y_fp8 = (a, ds_scale_a), (b.t(), ds_scale_b)
+            ds_x_fp8, ds_y_fp8 = (a, ds_scale_a), (b, ds_scale_b)
             ds_out = torch.empty((M, N), dtype=torch.bfloat16, device="cuda")
 
-            ms, min_ms, max_ms = triton.testing.do_bench(lambda: deepseek_fp8_define(ds_x_fp8, ds_y_fp8, ds_out), quantiles=quantiles, rep=500)
+            ms, min_ms, max_ms = triton.testing.do_bench(lambda: deepseek_fp8_forward(ds_x_fp8, ds_y_fp8, ds_out), quantiles=quantiles, rep=500)
+        elif provider == "deepseek-fp8-wgrad":
+            QB = 128
+            ds_scale_a = torch.rand((M, K // QB), dtype=torch.float32, device="cuda")
+            ds_scale_b = torch.rand((N, K // QB), dtype=torch.float32, device="cuda")
+            ds_scale_a = ds_scale_a.t().contiguous().t()
+            ds_scale_b = ds_scale_b.t().contiguous().t()
+            
+            ds_x_fp8, ds_y_fp8 = (a, ds_scale_a), (b, ds_scale_b)
+            ds_out = torch.empty((M, N), dtype=torch.float32, device="cuda")
+
+            ms, min_ms, max_ms = triton.testing.do_bench(lambda: deepseek_fp8_wgrad(ds_x_fp8, ds_y_fp8, ds_out), quantiles=quantiles, rep=500)
     else:
         raise ValueError(f"Invalid provider: {provider}")
 
@@ -138,9 +154,14 @@ BENCH_CONFIGS = {
         "line_names": "Triton-FP8-Output-Quantized",
         "color": ("red", "-"),
     },
-    "deepseek-fp8": {
-        "line_vals": "deepseek-fp8",
-        "line_names": "Deepseek-fp8",
+    "deepseek-fp8-fwd": {
+        "line_vals": "deepseek-fp8-fwd",
+        "line_names": "Deepseek-FP8-Fwd",
+        "color": ("orange", "-"),
+    },
+    "deepseek-fp8-wgrad": {
+        "line_vals": "deepseek-fp8-wgrad",
+        "line_names": "Deepseek-FP8-Wgrad",
         "color": ("orange", "-"),
     },
 }
